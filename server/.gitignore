@@ -1,0 +1,54 @@
+# Node modules (ไฟล์ dependencies ที่ติดตั้งผ่าน npm/yarn)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ไฟล์ที่สร้างโดย npm หรือ package manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs และ Temp files
+logs/
+*.log
+*.gz
+*.out
+*.pid
+*.seed
+*.pid.lock
+tmp/
+temp/
+
+# ไฟล์ที่สร้างโดยระบบปฏิบัติการ (Mac/Windows)
+.DS_Store
+Thumbs.db
+
+# Environment variables (เช่น API keys, secrets)
+.env
+.env.local
+.env.*.local
+
+# ไฟล์ build หรือ output ของแอป
+dist/
+build/
+
+# Dependency directories
+jspm_packages/
+
+# Editor & IDE (VS Code, JetBrains, etc.)
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Docker & Deployment
+docker-compose.override.yml
+.dockerignore
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+readme/
+backup.sql

@@ -1,0 +1,53 @@
+# Node modules และ dependencies  
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Vite และ build output  
+dist/
+.vite/
+.vitepress/cache/
+.temp/
+
+# Environment variables (เช่น API keys, secrets)  
+.env
+.env.local
+.env.*.local
+
+# Logs และ Temp files  
+logs/
+*.log
+*.gz
+*.out
+*.pid
+*.seed
+*.pid.lock
+tmp/
+temp/
+
+# MacOS / Windows system files  
+.DS_Store
+Thumbs.db
+
+# Editor & IDE settings  
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Coverage reports (ถ้ามีใช้ Jest หรือ Vitest)  
+coverage/
+.nyc_output/
+
+# Storybook  
+storybook-static/
+
+# Docker & Deployment  
+docker-compose.override.yml
+.dockerignore
+
+readme/
