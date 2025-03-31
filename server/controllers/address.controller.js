@@ -114,6 +114,7 @@ export const delelteAddressController = async(req,res)=>{
     const userId = req.user.id
     const {id} = req.body
 
+    //ลบที่อยู่
     const disableAddress = await prisma.address.update({
       where:{id:id,userId:userId},
       data:{
