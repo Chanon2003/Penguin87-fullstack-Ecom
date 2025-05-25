@@ -1,0 +1,6 @@
+[submodule "client"]
+	path = client
+	url = https://github.com/Chanon2003/penguin87ecom-web1.git
+[submodule "server"]
+	path = server
+	url = https://github.com/Chanon2003/penguin87ecom-api1.git
