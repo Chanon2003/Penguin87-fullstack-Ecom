@@ -1,0 +1,13 @@
+# root-level
+.env
+node_modules/
+dist/
+build/
+*.log
+
+# Ignore macOS system files
+.DS_Store
+
+# Optional: ignore common IDE files
+.vscode/
+.idea/
