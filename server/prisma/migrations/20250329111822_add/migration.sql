@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Order" ALTER COLUMN "paymentId" DROP NOT NULL,
+ALTER COLUMN "subTotalAmt" DROP NOT NULL,
+ALTER COLUMN "totalAmt" DROP NOT NULL;

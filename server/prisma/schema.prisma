@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                     String    @id @default(uuid())
+  name                   String
+  email                  String    @unique
+  password               String
+  avatar                 String? // ✅ เปลี่ยนเป็น nullable
+  avatarPublicId         String? // ✅ เพิ่มเพื่อเก็บ `public_id`
+  mobile                 String? // ใช้ BigInt แทน Number ใน Prisma
+  refresh_token          String    @default("")
+  verify_email           Boolean   @default(false)
+  isVerified             Boolean   @default(false)
+  last_login_date        DateTime?
+  status                 Status    @default(ACTIVE)
+  role                   Role      @default(USER)
+  verify_email_otp       String?
+  verify_email_expiry    DateTime?
+  forgot_password_otp    String?
+  forgot_password_expiry DateTime?
+
+  address_details Address[]     @relation("UserAddresses")
+  shopping_cart   CartProduct[] @relation("UserCart")
+  orderHistory    Order[]       @relation("UserOrders")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Address {
+  id           String  @id @default(uuid())
+  address_line String
+  city         String
+  state        String
+  pincode      String
+  country      String
+  mobile       String
+  status       Boolean @default(true)
+  userId       String
+  user         User    @relation("UserAddresses", fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Order     Order[]
+}
+
+model CartProduct {
+  id        String  @id @default(uuid())
+  productId String
+  quantity  Int     @default(1)
+  total     Float?
+  userId    String
+  user      User    @relation("UserCart", fields: [userId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id    String  @id @default(uuid())
+  name  String
+  image Image[]
+  unit  String  @default("")
+  stock Int?
+  price Float?
+
+  discount       Float?
+  discount_show Float?
+  
+  discount_start DateTime? 
+  discount_end   DateTime? 
+
+  description  String  @default("")
+  more_details Json    @default("{}")
+  publish      Boolean @default(true)
+  sold         Int?    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subcategories ProductSubCategory[]
+
+  cartProducts CartProduct[]
+  orders       ProductOnOrder[]
+
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+
+  @@index([name, description])
+}
+
+model ProductOnOrder {
+  id          String @id @default(uuid())
+  orderId     String
+  productId   String // อ้างอิงถึง product จาก Product
+  quantity    Int
+  price       Float // ราคาเฉพาะตัวของสินค้าใน Order (อาจต่างจากราคาปกติ)
+  discount    Float? // ส่วนลดเฉพาะสินค้าใน Order
+  subTotalAmt Float?
+
+  priceAtOrder Float    // ราคา ณ ตอนที่ทำการสั่งซื้อ
+  discountAtOrder Float  // ส่วนลดที่ใช้ ณ ตอนนั้น
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id               String  @id @default(uuid())
+  userId           String
+  paymentId        String?
+  payment_status   String
+  delivery_address String
+  totalAmt         Float   @default(0)
+  invoice_receipt  String?
+  stripePaymentId  String?
+  currency         String?
+
+  user    User    @relation("UserOrders", fields: [userId], references: [id])
+  address Address @relation(fields: [delivery_address], references: [id])
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  productOnOrder ProductOnOrder[]
+}
+
+model Image {
+  id                   String @id @default(uuid())
+  productimage         String // เก็บ URL ของรูปภาพ
+  productimagePublicId String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String // Foreign Key เชื่อมกับ Product
+
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id               String   @id @default(uuid())
+  name             String   @default("")
+  catimage         String   @default("")
+  catimagePublicId String   @default("")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  productCategories Product[]
+  subcategories     SubCategory[]
+}
+
+model SubCategory {
+  id                  String   @id @default(uuid())
+  name                String   @default("")
+  subcatimage         String   @default("")
+  subcatimagePublicId String   @default("")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  productSubcategories ProductSubCategory[]
+  Category             Category?            @relation(fields: [categoryId], references: [id])
+  categoryId           String?
+}
+
+model ProductSubCategory {
+  id            String      @id @default(uuid()) // Explicit primary key
+  product       Product     @relation(fields: [productId], references: [id])
+  productId     String
+  subCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
+  subCategoryId String
+
+  @@unique([productId, subCategoryId]) // 👈 เพิ่ม unique constraint
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum Role {
+  ADMIN
+  USER
+}
